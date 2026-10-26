@@ -1,8 +1,8 @@
 import api from './axios';
 
 // Auth Services
-export const loginApi = (credentials) => api.post('/auth/login', credentials);
-export const registerApi = (userData) => api.post('/auth/register', userData);
+export const loginApi = (credentials) => api.post('/api/auth/login', credentials);
+export const registerApi = (userData) => api.post('/api/auth/register', userData);
 export const getMeApi = () => api.get('/auth/me');
 
 // Mall Services
