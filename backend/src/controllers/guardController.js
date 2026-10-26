@@ -36,13 +36,14 @@ const verifyEntry = async (req, res, next) => {
     if (booking.bookingStatus === 'COMPLETED') {
       return sendError(res, 'Entry verification failed. Booking is already COMPLETED.', 400);
     }
+
     if (booking.bookingStatus === 'CANCELLED') {
       return sendError(res, 'Entry verification failed. Booking was CANCELLED.', 400);
     }
     if (booking.bookingStatus !== 'BOOKED') {
       return sendError(res, `Entry verification failed. Invalid booking status: '${booking.bookingStatus}'`, 400);
     }
-
+    booking.activeUser = undefined;
     // Execute state transition: BOOKED -> ACTIVE
     booking.bookingStatus = 'ACTIVE';
     booking.entryTime = new Date();

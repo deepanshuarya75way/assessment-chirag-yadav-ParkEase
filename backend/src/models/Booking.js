@@ -8,6 +8,11 @@ const bookingSchema = new mongoose.Schema(
       required: [true, 'User reference is required'],
       index: true,
     },
+    activeUser:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      select:false,
+    },
     mall: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Mall',
@@ -66,5 +71,6 @@ const bookingSchema = new mongoose.Schema(
 
 // Compound index for fast check of user's active bookings
 bookingSchema.index({ user: 1, bookingStatus: 1 });
+bookingSchema.index({activeUser:1}, {unique:true,sparse:true});
 
 module.exports = mongoose.model('Booking', bookingSchema);

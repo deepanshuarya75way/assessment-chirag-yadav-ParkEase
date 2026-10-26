@@ -66,6 +66,7 @@ const createBooking = async (req, res, next) => {
     try {
       booking = await Booking.create({
         user: userId,
+        activeUser: userId,
         mall: mallId,
         slot: allocatedSlot._id,
         vehicleNumber: vehicleNumber.toUpperCase().trim(),
@@ -76,6 +77,9 @@ const createBooking = async (req, res, next) => {
     } catch (err) {
       // If booking creation fails, rollback allocated slot status back to AVAILABLE
       await ParkingSlot.findByIdAndUpdate(allocatedSlot._id, { status: 'AVAILABLE' });
+      if(err.code == 11000 && (err.KeyPattern?.activeUser || err.KeyValue?.activeUser )){
+        return sendError(res, 'You already have an active parking booking.',400);
+      }
       throw err;
     }
 
@@ -182,6 +186,7 @@ const cancelBooking = async (req, res, next) => {
     }
 
     booking.bookingStatus = 'CANCELLED';
+    booking.activeUser = undefined;
     await booking.save();
 
     // Release allocated slot back to AVAILABLE
